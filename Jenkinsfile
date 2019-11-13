@@ -1,9 +1,17 @@
 pipeline {
-    agent any
+  agent any
+  tools {
+    maven 'M3'
+  }
+
+  options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '3')
+  
+  }
     stages {
-        stage('Test') {
+        stage('Build Build') {
             steps {
-                echo 'Hello World ...'
+                sh 'mvn clean package'
             }
         }
     }
