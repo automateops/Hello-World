@@ -19,7 +19,6 @@
 
         if (params.env!="prod" && params.env!="staging") {
           stage('Build & Test') {
-            withMaven(maven: 'maven3', mavenSettingsConfig: 'maven-local-settings-xml') {
                 sh "mvn clean package -Djenkins.build.number=${BUILD_NUMBER}"
             }
           }
