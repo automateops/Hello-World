@@ -37,10 +37,17 @@ node {
         rtMaven.deployer.deployArtifacts = false // Disable artifacts deployment during Maven run
 
         buildInfo = Artifactory.newBuildInfo()
-    }
- 
-    stage ('Test') {
-        rtMaven.run pom: 'pom.xml', goals: 'clean test'
-    }
+    } 
     
+    stage ('Build') {
+        rtMaven.run pom: 'pom.xml', goals: 'clean package', buildInfo: buildInfo
+    }
+
+    stage ('Deploy') {
+        rtMaven.deployer.deployArtifacts buildInfo
+    }
+        
+    stage ('Publish build info') {
+        server.publishBuildInfo buildInfo
+    }
 }
