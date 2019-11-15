@@ -12,13 +12,11 @@ node {
         commitId = sh(returnStdout: true, script: 'git rev-parse HEAD')
     }
 
-    stage("SonarQube Analysis") {
-      steps {
-        withSonarQubeEnv('SonarQube') {
-          bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar'
-        }
-      }
+    stage('SonarQube analysis') {
+    withSonarQubeEnv(credentialsId: 'github-token', installationName: 'SonarQube') { // You can override the credential to be used
+      sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.0.1398:sonar'
     }
+  }
  
     stage ('Artifactory configuration') {
         // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
