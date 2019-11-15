@@ -45,15 +45,4 @@ node {
         rtMaven.run pom: 'pom.xml', goals: 'clean test'
     }
         
-    stage ('Install') {
-        rtMaven.run pom: 'pom.xml', goals: 'install', buildInfo: buildInfo
-    }
-
-    stage ('Deploy') {
-        rtMaven.deployer.deployArtifacts buildInfo
-    }
-        
-    stage ('Publish build info') {
-        server.publishBuildInfo buildInfo
-    }
 }
