@@ -13,7 +13,7 @@ node {
     }
 
     stage('SonarQube analysis') {
-    withSonarQubeEnv(credentialsId: 'github-token', installationName: 'SonarQube') { // You can override the credential to be used
+    withSonarQubeEnv(credentialsId: 'sonarqube-jenkins', installationName: 'SonarQube') { // You can override the credential to be used
       sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.0.1398:sonar'
     }
   }
