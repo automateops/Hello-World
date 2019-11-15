@@ -40,6 +40,7 @@ node {
     }
  
     stage ('Test') {
-        rtMaven.run pom: 'pom.xml', goals: 'clean test'
+        rtMaven.run pom: 'hello-world/pom.xml', goals: 'clean test'
     }
+    
 }
