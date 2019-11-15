@@ -20,10 +20,9 @@
         if (params.env!="prod" && params.env!="staging") {
           stage('Build & Test') {
                 sh "mvn clean package -Djenkins.build.number=${BUILD_NUMBER}"
-            }
           }
         }
-
+        
         currentBuild.result = "SUCCESS"
 
     } catch (e) {
