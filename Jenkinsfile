@@ -30,7 +30,7 @@ node {
  
     stage ('Artifactory configuration') {
         // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
-        server = Artifactory.server Artifactory
+        server = Artifactory.server 'Artifactory'
 
         rtMaven = Artifactory.newMavenBuild()
         rtMaven.tool = maven3 // Tool name from Jenkins configuration
