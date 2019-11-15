@@ -44,7 +44,6 @@ node {
                 sh "mvn clean install"
             }
           }
-        }
 
     stage ('Deploy') {
         rtMaven.deployer.deployArtifacts buildInfo
