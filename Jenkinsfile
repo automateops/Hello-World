@@ -1,3 +1,6 @@
+ def server Artifactory.newServer url 'http://artifactory-jfrog-artifactory.artifactory:8081'
+ def rtMaven Artifactory.newMavenBuild()
+
  node {
     try {
         currentBuild.result = "SUCCESS"
@@ -17,17 +20,49 @@
             commitId = sh(returnStdout: true, script: 'git rev-parse HEAD')
         }
 
+        stage("SonarQube Analysis") {
+          steps {
+            withSonarQubeEnv('SonarQube') {
+              bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar'
+            }
+          }
+        }
+
+        stage("Artifactory Configuration") {
+          steps {
+            script {
+              rtMaven.tool = 'maven3'
+              rtMaven.deployer releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local', server: server
+              rtMaven.resolver releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot', server: server
+              rtMaven.deployer.artifactDeploymentPatterns.addExclude("pom.xml")
+              buildInfo = Artifactory.newBuildInfo()
+              buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+              buildInfo.env.capture = true
+            }
+          }
+        }
+
         if (params.env!="prod" && params.env!="staging") {
           stage('Build & Test') {
-                sh "mvn clean package -Djenkins.build.number=${BUILD_NUMBER}"
+            script {
+              rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
+            }
+          }
+        }
+
+        stage("Publish build info") {
+          steps {
+            script {
+              server.publishBuildInfo buildInfo
+            }
           }
         }
         
         currentBuild.result = "SUCCESS"
 
-    } catch (e) {
-      currentBuild.result = "FAILED"
-      throw e
-    } finally {
+      } catch (e) {
+        currentBuild.result = "FAILED"
+        throw e
+      } finally {
     }
  }
