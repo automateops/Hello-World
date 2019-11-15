@@ -15,10 +15,8 @@ node {
     stage('SonarQube analysis') {
       withSonarQubeEnv('SonarQube') {
         sh 'mvn clean package sonar:sonar'
-      } // submitted SonarQube taskId is automatically attached to the pipeline context
-    }
-  }
-    
+        } // submitted SonarQube taskId is automatically attached to the pipeline context
+      }
     // No need to occupy a node
     stage("Quality Gate"){
       timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
@@ -27,7 +25,7 @@ node {
           error "Pipeline aborted due to quality gate failure: ${qg.status}"
         }
       }
- 
+    }
     stage ('Artifactory configuration') {
         // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
         server = Artifactory.server 'Artifactory'
@@ -45,4 +43,15 @@ node {
         rtMaven.run pom: 'pom.xml', goals: 'clean test'
     }
         
+    stage ('Install') {
+        rtMaven.run pom: 'pom.xml', goals: 'install', buildInfo: buildInfo
+    }
+
+    stage ('Deploy') {
+        rtMaven.deployer.deployArtifacts buildInfo
+    }
+        
+    stage ('Publish build info') {
+        server.publishBuildInfo buildInfo
+    }
 }
