@@ -13,10 +13,20 @@ node {
     }
 
     stage('SonarQube analysis') {
-    withSonarQubeEnv(credentialsId: 'sonarqube-jenkins', installationName: 'SonarQube') { // You can override the credential to be used
-      sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.0.1398:sonar'
+      withSonarQubeEnv('SonarQube') {
+        sh 'mvn clean package sonar:sonar'
+      } // submitted SonarQube taskId is automatically attached to the pipeline context
     }
   }
+    
+    // No need to occupy a node
+    stage("Quality Gate"){
+      timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+        def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+        if (qg.status != 'OK') {
+          error "Pipeline aborted due to quality gate failure: ${qg.status}"
+        }
+      }
  
     stage ('Artifactory configuration') {
         // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
@@ -38,7 +48,7 @@ node {
     stage ('Install') {
         rtMaven.run pom: 'maven-example/pom.xml', goals: 'install', buildInfo: buildInfo
     }
- 
+
     stage ('Deploy') {
         rtMaven.deployer.deployArtifacts buildInfo
     }
