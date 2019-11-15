@@ -41,7 +41,7 @@ node {
     
     stage('Build & Test') {
             withMaven(maven: 'maven3', mavenSettingsConfig: '9e9534d7-fac4-4fa7-8264-86d23809f9d1') {
-                sh "mvn clean install"
+                sh "mvn clean package"
             }
           }
 
