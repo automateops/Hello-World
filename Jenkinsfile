@@ -1,10 +1,7 @@
 node {
-    def server Artifactory.newServer url 'http://artifactory-jfrog-artifactory.artifactory:8081'
-    def rtMaven Artifactory.newMavenBuild()
-    stage("Preparation") {
-      env.M2_HOME="${tool 'maven3'}"
-      env.MAVEN_OPTS="-Drepo.url=http://artifactory-jfrog-artifactory.artifactory:8081 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
-    }
+    def server
+    def buildInfo
+    def rtMaven
 
     stage("Cleanup Workspace") {
       deleteDir()
@@ -22,34 +19,33 @@ node {
         }
       }
     }
+ 
+    stage ('Artifactory configuration') {
+        // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
+        server = Artifactory..newServer url 'http://artifactory-jfrog-artifactory.artifactory:8081'
 
-    stage("Artifactory Configuration") {
-      steps {
-        script {
-          rtMaven.tool = 'maven3'
-          rtMaven.deployer releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local', server: server
-          rtMaven.resolver releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot', server: server
-          rtMaven.deployer.artifactDeploymentPatterns.addExclude("pom.xml")
-          buildInfo = Artifactory.newBuildInfo()
-          buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
-          buildInfo.env.capture = true
-        }
-      }
+        rtMaven = Artifactory.newMavenBuild()
+        rtMaven.tool = MAVEN_TOOL // Tool name from Jenkins configuration
+        rtMaven.deployer releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local', server: server
+        rtMaven.resolver releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot', server: server
+        rtMaven.deployer.deployArtifacts = false // Disable artifacts deployment during Maven run
+
+        buildInfo = Artifactory.newBuildInfo()
     }
-
-    if (params.env!="prod" && params.env!="staging") {
-      stage('Build & Test') {
-        script {
-          rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
-        }
-      }
+ 
+    stage ('Test') {
+        rtMaven.run pom: 'maven-example/pom.xml', goals: 'clean test'
     }
-
-    stage("Publish build info") {
-      steps {
-        script {
-          server.publishBuildInfo buildInfo
-        }
-      }
+        
+    stage ('Install') {
+        rtMaven.run pom: 'maven-example/pom.xml', goals: 'install', buildInfo: buildInfo
+    }
+ 
+    stage ('Deploy') {
+        rtMaven.deployer.deployArtifacts buildInfo
+    }
+        
+    stage ('Publish build info') {
+        server.publishBuildInfo buildInfo
     }
 }
