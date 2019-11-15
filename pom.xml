@@ -35,7 +35,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <fabric8.generator.spring-boot.name>arungupta/${project.artifactId}</fabric8.generator.spring-boot.name>
+        <fabric8.generator.spring-boot.name>automateops/${project.artifactId}</fabric8.generator.spring-boot.name>
     </properties>
 
     <build>

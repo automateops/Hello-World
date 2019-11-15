@@ -32,8 +32,8 @@ node {
 
         rtMaven = Artifactory.newMavenBuild()
         rtMaven.tool = 'maven3' // Tool name from Jenkins configuration
-        rtMaven.deployer releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local', server: server
-        rtMaven.resolver releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot', server: server
+        rtMaven.deployer server: server, releaseRepo: 'automateops-libs-release-local', snapshotRepo: 'automateops-libs-snapshot-local'
+        rtMaven.resolver server: server, releaseRepo: 'automateops-libs-release', snapshotRepo: 'automateops-libs-snapshot'
         rtMaven.deployer.deployArtifacts = false // Disable artifacts deployment during Maven run
 
         buildInfo = Artifactory.newBuildInfo()
@@ -50,4 +50,5 @@ node {
     stage ('Publish build info') {
         server.publishBuildInfo buildInfo
     }
+
 }
