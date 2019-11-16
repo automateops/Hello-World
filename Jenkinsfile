@@ -41,9 +41,11 @@ node {
 
         
     stage ('Build') {
+      withMaven(maven: 'maven3', mavenSettingsConfig: '9e9534d7-fac4-4fa7-8264-86d23809f9d1') {
         rtMaven.run pom: 'pom.xml', goals: 'mvn clean package', buildInfo: buildInfo
-    } 
-
+      } 
+    }
+  
 
     stage ('Deploy') {
         rtMaven.deployer.deployArtifacts buildInfo
