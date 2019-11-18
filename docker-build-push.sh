@@ -1,6 +1,5 @@
 #!/bin/sh
 
-export ROOT=$(pwd)
 export APP_NAME=${1}
 export APP_VERSION=${2}
 export DOCKER_REGISTRY=${3}
