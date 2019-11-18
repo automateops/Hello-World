@@ -52,7 +52,7 @@ node {
     properties(
     [
         parameters(
-            [string(name: 'DOCKER_REGISTRY', defaultValue: 'core.dev-us-west-2-aws.automateops.co.uk/automateops/'),
+            [string(name: 'DOCKER_REGISTRY', defaultValue: 'core.dev-us-west-2-aws.automateops.co.uk/automateops'),
             string(name: 'APP_NAME', defaultValue: 'web'),
             string(name: 'APP_VERSION', defaultValue: 'v1')]
             )
