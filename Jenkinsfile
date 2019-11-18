@@ -56,7 +56,7 @@ node {
         withCredentials([
             string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
             string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
-                sh "./docker-build-push.sh dockerRegistry ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} dockerUsername dockerPassword"
+                sh "./docker-build-push.sh ${dockerRegistry} ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} ${dockerUsername} ${dockerPassword}"
       }
   }
 }
