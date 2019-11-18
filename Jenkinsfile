@@ -2,6 +2,9 @@ node {
     def server
     def buildInfo
     def rtMaven
+    def dockerRegistry = 'core.dev-us-west-2-aws.automateops.co.uk/automateops'
+    def dockerUsername = 'web'
+    def dockerPassword = 'v1'
 
     stage("Cleanup Workspace") {
       deleteDir()
@@ -48,26 +51,12 @@ node {
     stage ('Publish build info') {
         server.publishBuildInfo buildInfo
     }
-
-    properties(
-    [
-        parameters(
-            [string(name: 'DOCKER_REGISTRY', defaultValue: 'core.dev-us-west-2-aws.automateops.co.uk/automateops'),
-            string(name: 'APP_NAME', defaultValue: 'web'),
-            string(name: 'APP_VERSION', defaultValue: 'v1')]
-            )
-    ]
-    )
     
     stage("Build & Push Image") {
         withCredentials([
             string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
             string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
-                sh "./docker-build-push.sh ${params.DOCKER_REGISTRY} \
-                                           ${DOCKER_HUB_USERNAME} \
-                                           ${DOCKER_HUB_PASSWORD} \
-                                           ${params.APP_NAME} \
-                                           ${params.APP_VERSION}"
+                sh "./docker-build-push.sh dockerRegistry ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} dockerUsername dockerPassword"
       }
   }
 }
