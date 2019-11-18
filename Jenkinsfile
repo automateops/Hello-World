@@ -2,7 +2,8 @@ node {
     def server
     def buildInfo
     def rtMaven
-    def dockerRegistry = 'core.dev-us-west-2-aws.automateops.co.uk/automateops'
+    def dockerRegistry = 'core.dev-us-west-2-aws.automateops.co.uk'
+    def dockerRepository = 'automateops'
     def appName = 'web'
     def appVersion = 'v1'
 
@@ -56,7 +57,7 @@ node {
         withCredentials([
             string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
             string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
-                sh "./docker-build-push.sh ${dockerRegistry} ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} ${appName} ${appVersion}"
+                sh "./docker-build-push.sh ${dockerRegistry} ${dockerRepository} ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} ${appName} ${appVersion}"
       }
   }
 }
