@@ -39,15 +39,34 @@ node {
         buildInfo = Artifactory.newBuildInfo()
     } 
     
-    stage('Build & Test') {
-            withMaven(maven: 'maven3', mavenSettingsConfig: '9e9534d7-fac4-4fa7-8264-86d23809f9d1') {
-                sh "mvn clean package"
-            }
-          }
+    stage('App Build & Test') {
+        withMaven(maven: 'maven3', mavenSettingsConfig: '9e9534d7-fac4-4fa7-8264-86d23809f9d1') {
+            sh "mvn clean package"
+        }
+    }
 
         
     stage ('Publish build info') {
         server.publishBuildInfo buildInfo
     }
 
+    parameters {
+        string(name: 'DOCKER_REGISTRY', defaultValue: 'core.dev-us-west-2-aws.automateops.co.uk/automateops/')
+        string(name: 'APP_NAME', defaultValue: 'web')
+        string(name: 'APP_VERSION', defaultValue: 'v1')
+    }
+    
+    stage("Build & Push Image") {
+        steps {
+            withCredentials([
+                string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
+                string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
+                    sh "./docker-build-push.sh ${params.APP_NAME} \
+                                               ${params.APP_VERSION} \
+                                               ${params.DOCKER_REGISTRY} \
+                                               ${params.DOCKER_HUB_USERNAME} \
+                                               ${params.DOCKER_HUB_PASSWORD}"
+          }
+        }
+      }
 }
