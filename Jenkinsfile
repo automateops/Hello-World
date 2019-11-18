@@ -54,11 +54,11 @@ node {
         server.publishBuildInfo buildInfo
     }
     
-    stage("Build & Push Image") {
+    stage("Build & Deploy") {
         withCredentials([
             string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
             string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
-                sh "./docker-build-push.sh ${dockerRegistry} ${dockerRepository} ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} ${appName} ${appVersion} ${environment}"
+                sh "./build-and-deploy.sh ${dockerRegistry} ${dockerRepository} ${DOCKER_HUB_USERNAME} ${DOCKER_HUB_PASSWORD} ${appName} ${appVersion} ${environment}"
       }
   }
 }
