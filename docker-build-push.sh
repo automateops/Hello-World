@@ -8,8 +8,8 @@ export DOCKER_HUB_USERNAME=${4}
 export DOCKER_HUB_PASSWORD=${5}
 
 pwd 
-ls -lah 
+ls -lah target/
 
-echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USER} --password-stdin
+echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
 docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION} .
 docker push ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION}
