@@ -7,9 +7,14 @@ export DOCKER_REGISTRY=${3}
 export DOCKER_HUB_USERNAME=${4}
 export DOCKER_HUB_PASSWORD=${5}
 
-pwd 
-ls -lah target/
+docker_login() {
+    echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+}
 
-echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
-docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION} .
-docker push ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION}
+docker_build_push(){
+    docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION} .
+    docker push ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION}
+}
+
+docker_login
+docker_build_push
