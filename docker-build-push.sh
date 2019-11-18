@@ -1,13 +1,15 @@
 #!/bin/sh
 
-export APP_NAME=${1}
-export APP_VERSION=${2}
-export DOCKER_REGISTRY=${3}
-export DOCKER_HUB_USERNAME=${4}
-export DOCKER_HUB_PASSWORD=${5}
+export DOCKER_REGISTRY=${1}
+export DOCKER_HUB_USERNAME=${2}
+export DOCKER_HUB_PASSWORD=${3}
+export APP_NAME=${4}
+export APP_VERSION=${5}
+
+
 
 docker_login() {
-    echo ${DOCKER_HUB_PASSWORD} | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+    echo ${DOCKER_HUB_PASSWORD} | docker login ${DOCKER_REGISTRY} --username ${DOCKER_HUB_USERNAME} --password-stdin
 }
 
 docker_build_push(){

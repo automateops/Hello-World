@@ -45,7 +45,6 @@ node {
         }
     }
 
-        
     stage ('Publish build info') {
         server.publishBuildInfo buildInfo
     }
@@ -57,7 +56,6 @@ node {
             string(name: 'APP_NAME', defaultValue: 'web'),
             string(name: 'APP_VERSION', defaultValue: 'v1')]
             )
-
     ]
     )
     
@@ -65,11 +63,11 @@ node {
         withCredentials([
             string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
             string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
-                sh "./docker-build-push.sh ${params.APP_NAME} \
-                                           ${params.APP_VERSION} \
-                                           ${params.DOCKER_REGISTRY} \
+                sh "./docker-build-push.sh ${params.DOCKER_REGISTRY} \
                                            ${DOCKER_HUB_USERNAME} \
-                                           ${DOCKER_HUB_PASSWORD}"
+                                           ${DOCKER_HUB_PASSWORD} \
+                                           ${params.APP_NAME} \
+                                           ${params.APP_VERSION}"
       }
   }
 }
