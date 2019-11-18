@@ -61,10 +61,10 @@ node {
             string(credentialsId: "DOCKER_HUB_USERNAME", variable: 'DOCKER_HUB_USERNAME'),
             string(credentialsId: "DOCKER_HUB_PASSWORD", variable: 'DOCKER_HUB_PASSWORD')]) {
                 sh "./docker-build-push.sh ${params.APP_NAME} \
-                                            ${params.APP_VERSION} \
-                                            ${params.DOCKER_REGISTRY} \
-                                            ${params.DOCKER_HUB_USERNAME} \
-                                            ${params.DOCKER_HUB_PASSWORD}"
+                                           ${params.APP_VERSION} \
+                                           ${params.DOCKER_REGISTRY} \
+                                           ${DOCKER_HUB_USERNAME} \
+                                           ${DOCKER_HUB_PASSWORD}"
       }
   }
 }

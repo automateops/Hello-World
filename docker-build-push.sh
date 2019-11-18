@@ -11,5 +11,5 @@ pwd
 ls -lah 
 
 echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USER} --password-stdin
-docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION}
+docker build -t ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION} .
 docker push ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION}
